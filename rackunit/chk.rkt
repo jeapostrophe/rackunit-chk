@@ -7,8 +7,8 @@
          (for-syntax racket/base
                      syntax/parse))
 
-(struct res:exn (x))
-(struct res:values (vs))
+(struct res:exn (x) #:transparent)
+(struct res:values (vs) #:transparent)
 (define (res-equal? x y)
   (or (and (res:values? x) (res:values? y)
            (equal? (res:values-vs x)
@@ -125,8 +125,10 @@
    2 2
    #:exn (/ 1 0) "division"
    #:exn (/ 1 0) #rx"di.ision"
+   #:exn (/ 1 0) exn:fail?
    #:f #:exn (/ 1 1) "division"
    #:f #:exn (/ 1 0) "diblision"
+   (/ 1 0) (error '/ "division by zero")
 
    #:t (chk 1)
    #:t 1
