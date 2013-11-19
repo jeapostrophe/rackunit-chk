@@ -70,7 +70,8 @@
       (ru:check-pred res:values? av))))
 
 (begin-for-syntax
-  (define-splicing-syntax-class test
+  (define-splicing-syntax-class strict-test
+    #:commit
     #:attributes (unit fail-unit)
     [pattern (~seq #:f t:test)
              #:attr unit #'t.fail-unit
@@ -89,15 +90,29 @@
              #:attr fail-unit
              (syntax/loc #'a
                (check-not-exn a b))]
-    [pattern (~seq a:expr b:expr)
+    [pattern (~seq #:= a:expr b:expr)
              #:attr unit
              (syntax/loc #'a
                (check-equal? a b))
              #:attr fail-unit
              (syntax/loc #'a
-               (check-not-equal? a b))]
+               (check-not-equal? a b))])
+
+  (define-splicing-syntax-class test
+    #:commit
+    #:attributes (unit fail-unit)
+    (pattern c:strict-test
+             #:attr unit #'c.unit
+             #:attr fail-unit #'c.fail-unit)
+    (pattern (c:strict-test)
+             #:attr unit #'c.unit
+             #:attr fail-unit #'c.fail-unit)
+    [pattern (~seq a:expr b:expr)
+             #:with (c:strict-test) (syntax/loc #'a (#:= a b))
+             #:attr unit #'c.unit
+             #:attr fail-unit #'c.fail-unit]
     [pattern (~seq a:expr)
-             #:with (c:test) (syntax/loc #'a (#:t a))
+             #:with (c:strict-test) (syntax/loc #'a (#:t a))
              #:attr unit #'c.unit
              #:attr fail-unit #'c.fail-unit]))
 
@@ -142,4 +157,10 @@
    #:f (values 1 2) (values 2 3)
    #:f (values 1 2) 3
    #:f 3 (values 1 2)
-   (quotient/remainder 10 3) (values 3 1)))
+   (quotient/remainder 10 3) (values 3 1)
+
+   #:= 1 1
+   [#:exn (/ 1 0) "division"]
+   [#:f #f]
+   [#:t 1]
+   [#:= 1 1]))
