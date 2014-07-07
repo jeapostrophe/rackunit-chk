@@ -1,4 +1,4 @@
 #lang info
 (define collection 'multi)
-(define deps '())
+(define deps '("base" "rackunit-lib"))
 (define build-deps '())
