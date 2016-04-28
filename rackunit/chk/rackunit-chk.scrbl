@@ -21,6 +21,7 @@ Runs each @racket[test] provided it matches the following grammar:
 @racketgrammar*[#:literals (~seq)
                 [test
                  strict-test
+                 (strict-test)
                  (~seq actual expected)
                  (~seq actual)]
                 [strict-test
