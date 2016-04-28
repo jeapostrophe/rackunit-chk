@@ -119,7 +119,13 @@
 (define-simple-macro (chk e:test ...)
   (begin e.unit ...))
 
-(provide chk)
+(provide chk
+         check-equal?
+         check-not-equal?
+         check-false
+         check-not-false
+         check-exn
+         check-not-exn)
 
 (module+ test
   (chk
